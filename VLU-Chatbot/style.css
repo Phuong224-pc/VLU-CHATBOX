@@ -1,0 +1,1073 @@
+:root {
+    --bg-main: #ffffff;
+    --sidebar-bg: #f9f9f9;
+    --input-bg: #f4f4f4;
+    --text-main: #2d2d2d;
+    --vlu-red: #ed1c24;
+    --vlu-red-hover: #c4161d;
+    --border-color: #e5e5e5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-main);
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.gemini-container {
+    display: flex;
+    height: 100vh;
+}
+
+
+/* Sidebar */
+
+.gemini-sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+
+/* CSS CHO SIDEBAR LOGO */
+
+.sidebar-logo {
+    width: 140px;
+    /* Điều chỉnh độ rộng logo sidebar */
+    height: auto;
+    margin-bottom: 25px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.new-chat-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Main Content */
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.top-header {
+    width: 100%;
+    padding: 15px 25px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+
+/* CSS CHO HEADER LOGO */
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-logo {
+    width: 30px;
+    /* Kích thước logo nhỏ trên header */
+    height: 30px;
+    object-fit: contain;
+}
+
+.chat-display {
+    flex: 1;
+    width: 100%;
+    max-width: 850px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.gradient-text {
+    font-size: 44px;
+    font-weight: 800;
+    background: linear-gradient(to right, var(--vlu-red), #ff6b6b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.gemini-welcome {
+    margin-top: 15vh;
+    text-align: center;
+}
+
+.sub-welcome {
+    font-size: 28px;
+    color: #666;
+    margin-top: 15px;
+}
+
+
+/* Chat Bubbles */
+
+.message {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .content {
+    background: #f0f0f0;
+    padding: 12px 18px;
+    border-radius: 18px 18px 0 18px;
+    max-width: 70%;
+}
+
+.bot-message .bot-icon {
+    width: 35px;
+    height: 35px;
+    background: var(--vlu-red);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Input Bar */
+
+.bottom-container {
+    width: 100%;
+    max-width: 850px;
+    padding: 0 20px 25px;
+}
+
+.input-wrapper {
+    background: var(--input-bg);
+    border-radius: 28px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+textarea {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    resize: none;
+    font-family: inherit;
+    padding: 8px 0;
+    max-height: 150px;
+}
+
+.input-tools-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Chỉnh lại khoảng cách cho gọn */
+    flex-shrink: 0;
+}
+
+
+/* Nâng cấp nút Micro và Gửi cho đẹp */
+
+.mic-btn,
+.send-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    font-size: 16px;
+    color: #555;
+}
+
+.mic-btn:hover {
+    background-color: #e8e8e8;
+}
+
+.send-btn {
+    background-color: #222;
+    /* Màu đen sang trọng cho nút gửi */
+    color: white;
+}
+
+.send-btn:hover {
+    background-color: var(--vlu-red);
+}
+
+.plus-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.plus-btn.active {
+    transform: rotate(45deg);
+    background: var(--vlu-red);
+    border-color: var(--vlu-red);
+    color: white;
+}
+
+.attach-wrapper {
+    position: relative;
+}
+
+.attach-menu {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 220px;
+    background: #212121;
+    border-radius: 12px;
+    padding: 8px;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.attach-menu.show {
+    display: block;
+}
+
+.menu-item {
+    padding: 10px;
+    color: #ececec;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-item:hover {
+    background: #333;
+}
+
+.has-submenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    left: 215px;
+    bottom: 0;
+    width: 180px;
+    background: #212121;
+    border-radius: 12px;
+    padding: 8px;
+    border: 1px solid #444;
+}
+
+.has-submenu:hover .submenu {
+    display: block;
+}
+
+
+/* Auth Area */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 350px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.auth-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #888;
+}
+
+.tab-btn.active {
+    color: var(--vlu-red);
+    border-bottom: 2px solid var(--vlu-red);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-form input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.vlu-red-btn {
+    background: var(--vlu-red);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.vlu-red-btn:hover {
+    background: var(--vlu-red-hover);
+}
+
+.top-auth-area {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 100;
+}
+
+.guest-toggle-btn {
+    background: var(--vlu-red);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.social-login-separator {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    color: #888;
+    font-size: 13px;
+}
+
+.social-login-separator::before,
+.social-login-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #eee;
+}
+
+.social-login-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.facebook-btn {
+    background: #1877f2;
+    color: white;
+    border: none;
+}
+
+.disclaimer {
+    font-size: 11px;
+    color: #999;
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+/* Sidebar Bottom Fix */
+
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 10px;
+}
+
+.icon-link {
+    width: 100%;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+}
+
+.icon-link:hover {
+    background-color: #f0f0f0;
+    color: var(--vlu-red);
+}
+
+.icon-link i {
+    font-size: 16px;
+    color: #666;
+}
+
+
+/* Hiệu ứng 3 dấu chấm nhảy múa */
+
+.typing-indicator .content {
+    display: flex;
+    gap: 4px;
+    padding: 12px 18px !important;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background: #888;
+    border-radius: 50%;
+    animation: wave 1.3s infinite;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes wave {
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-6px);
+    }
+}
+
+
+/* Mặc định nút gửi hơi mờ khi chưa có chữ */
+
+#sendBtn {
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+.clear-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.clear-btn:hover {
+    background: #eee;
+    color: #ed1c24;
+    /* Đổi sang đỏ khi muốn xóa */
+}
+
+
+/* Đảm bảo khoảng cách nút gửi và x hợp lý */
+
+.input-tools-right {
+    gap: 8px !important;
+}
+
+
+/* Làm hiện nút dấu X xóa lịch sử */
+
+.clear-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #999;
+    /* Màu xám mờ mờ cho sang */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.clear-btn:hover {
+    background: #eeeeee;
+    color: #ed1c24;
+    /* Di chuột vào thì hiện màu đỏ Văn Lang */
+}
+
+
+/* Đảm bảo cụm nút bên phải không bị dính chùm */
+
+.input-tools-right {
+    display: flex;
+    align-items: center;
+    gap: 8px !important;
+    flex-shrink: 0;
+}
+
+
+/* Nút cuộn xuống dưới */
+
+.scroll-btn {
+    position: sticky;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #ddd;
+    color: #666;
+    display: none;
+    /* Mặc định ẩn */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: 0.3s;
+}
+
+.scroll-btn:hover {
+    background: #f5f5f5;
+    color: var(--vlu-red);
+}
+
+
+/* --- PHẦN BỔ SUNG: LỊCH SỬ CHAT BÊN SIDEBAR --- */
+
+
+/* Căn chỉnh lại sidebar-top để có thể chứa danh sách cuộn */
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+/* Khối danh sách lịch sử chat */
+
+.chat-history-list {
+    margin-top: 15px;
+    width: 100%;
+    overflow-y: auto;
+    /* Hiện thanh cuộn nếu danh sách quá dài */
+    max-height: 55vh;
+    padding-right: 5px;
+}
+
+
+/* Nhãn "Gần đây" hoặc "Lịch sử" */
+
+.history-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    margin: 15px 0 8px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+/* Từng dòng tiêu đề lịch sử */
+
+.history-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Hiện dấu ... nếu tiêu đề dài */
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.history-item:hover {
+    background-color: #f0f0f0;
+    color: var(--vlu-red);
+}
+
+.history-item i {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+
+/* Làm thanh cuộn của lịch sử chat mỏng và đẹp hơn */
+
+.chat-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chat-history-list::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+}
+
+
+/* Đưa nút Xóa lịch sử vào Sidebar thay vì thanh chat */
+
+#clearChatBtn {
+    width: 100%;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px dashed #ccc;
+    color: #888;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#clearChatBtn:hover {
+    background: #fff0f0;
+    color: var(--vlu-red);
+    border-color: var(--vlu-red);
+}
+
+
+/* Ẩn nút X cũ ở thanh chat nếu bạn muốn */
+
+.input-tools-right #clearChatBtn {
+    display: none;
+}
+
+.clear-history-btn:hover {
+    color: var(--vlu-red) !important;
+    background-color: #fff0f0 !important;
+}
+
+
+/* --- [MỚI] CHẾ ĐỘ TỐI (DARK MODE) --- */
+
+body.dark-mode {
+    --bg-main: #171717;
+    --sidebar-bg: #212121;
+    --input-bg: #2f2f2f;
+    --text-main: #ececec;
+    --border-color: #333;
+}
+
+
+/* Điều chỉnh các phần tử khi ở Dark Mode */
+
+body.dark-mode .new-chat-btn {
+    background: #333;
+    color: white;
+    border-color: #444;
+}
+
+body.dark-mode .user-message .content {
+    background: #333;
+    color: white;
+}
+
+body.dark-mode textarea {
+    color: white;
+}
+
+body.dark-mode .history-item {
+    color: #ccc;
+}
+
+body.dark-mode .history-item:hover {
+    background: #444;
+}
+
+body.dark-mode .modal-content {
+    background: #212121;
+    color: white;
+}
+
+body.dark-mode .auth-form input {
+    background: #333;
+    color: white;
+    border-color: #444;
+}
+
+
+/* Hiệu ứng chuyển màu mượt mà cho toàn body */
+
+body {
+    transition: background 0.3s, color 0.3s;
+}
+
+
+/* --- [MỚI] HIỆU ỨNG MƯA LOGO VLU --- */
+
+.rain-logo {
+    position: fixed;
+    top: -50px;
+    width: 30px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}
+
+
+/* --- CSS CHO NÚT DARK MODE TRÊN HEADER --- */
+
+.mode-toggle-top {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 15px;
+    /* Tạo khoảng cách với chữ VLU Chatbot */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.mode-toggle-top:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--vlu-red);
+}
+
+
+/* Khi ở chế độ tối, đổi màu hover trên header */
+
+body.dark-mode .mode-toggle-top {
+    color: #ccc;
+}
+
+body.dark-mode .mode-toggle-top:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffcc00;
+    /* Màu vàng mặt trời cho nổi trên nền tối */
+}
+
+
+/* --- HIỆU ỨNG PHÁT SÁNG (GLOW) KHI BOT SUY NGHĨ --- */
+
+@keyframes redGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(237, 28, 36, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(237, 28, 36, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(237, 28, 36, 0.2);
+    }
+}
+
+.typing-indicator .bot-icon {
+    animation: redGlow 1.5s infinite;
+    border: 1px solid var(--vlu-red);
+}
+
+
+/* CSS cho nút Dark Mode trên Header ) */
+
+.mode-toggle-top {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 15px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.mode-toggle-top:hover {
+    background-color: rgba(237, 28, 36, 0.1);
+    color: var(--vlu-red);
+}
+
+body.dark-mode .mode-toggle-top {
+    color: #ccc;
+}
+
+
+/* --- HIỆU ỨNG GLOW CHO BOT --- */
+
+@keyframes redGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(237, 28, 36, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(237, 28, 36, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(237, 28, 36, 0.2);
+    }
+}
+
+.typing-indicator .bot-icon {
+    animation: redGlow 1.5s infinite;
+    border: 1px solid var(--vlu-red);
+}
+
+
+/* --- STYLE NÚT COPY & SPEAK --- */
+
+.bot-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.message:hover .bot-actions {
+    opacity: 1;
+}
+
+.bot-actions i {
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.bot-actions i:hover {
+    color: var(--vlu-red);
+}
+
+
+/* --- NÚT DARK MODE TRÊN HEADER --- */
+
+.mode-toggle-top {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 15px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.mode-toggle-top:hover {
+    background-color: rgba(237, 28, 36, 0.1);
+    color: var(--vlu-red);
+}
+
+body.dark-mode .mode-toggle-top {
+    color: #ccc;
+}
+/* Làm đẹp nội dung bên trong bong bóng chat của Bot */
+.bot-message .content {
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.bot-message .content h1, .bot-message .content h2, .bot-message .content h3 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #c0392b; /* Màu đỏ đặc trưng VLU */
+}
+
+.bot-message .content ul, .bot-message .content ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.bot-message .content code {
+    background: #f0f0f0;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Hiệu ứng hiện hình mượt mà */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes rainFall {
+    0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+.has-submenu { position: relative; }
+.submenu { display: none; position: absolute; left: 100%; bottom: 0; }
+.has-submenu:hover .submenu { display: block; }
+/* Container của Menu đính kèm */
+.attach-menu {
+    display: none; /* Ẩn mặc định */
+    position: absolute;
+    bottom: 60px; /* Hiển thị phía trên input */
+    left: 10px;
+    background: #2f2f2f; /* Màu tối giống ảnh mẫu */
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 220px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    z-index: 1000;
+}
+
+/* Class active: Khi có class này thì menu mới hiện */
+.attach-menu.active {
+    display: block;
+    animation: fadeInUp 0.2s ease-out; /* Thêm hiệu ứng nhún nhảy nhẹ */
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Style cho các mục trong menu */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.menu-item i {
+    width: 20px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background: #404040;
+}
