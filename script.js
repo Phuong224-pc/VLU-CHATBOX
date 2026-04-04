@@ -25,6 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const newChatBtn = document.getElementById('newChatBtn');
     const darkModeBtn = document.getElementById('darkModeBtn');
     const modeText = document.getElementById('modeText');
+    // --- [MỚI THÊM] LOGIC ĐÓNG/MỞ SIDEBAR GIỐNG CHATGPT ---
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const sidebar = document.querySelector('aside'); // Hoặc ID/Class sidebar của Phương
+    const mainContent = document.querySelector('main'); // Phần khung chat chính
+
+    if (toggleSidebar && sidebar) {
+        toggleSidebar.onclick = () => {
+            sidebar.classList.toggle('closed');
+            
+            
+            
+            // Đổi icon bars thành icon khác khi đóng/mở cho đẹp
+            const icon = toggleSidebar.querySelector('i');
+            if (sidebar.classList.contains('closed')) {
+                icon.classList.replace('fa-bars', 'fa-chevron-right');
+            } else {
+                icon.classList.replace('fa-chevron-right', 'fa-bars');
+            }
+        };
+    }
     
     
     // --- [MỚI THÊM] 2.1 LOGIC ĐIỀU KHIỂN MENU ĐÍNH KÈM (ATTACH MENU) ---

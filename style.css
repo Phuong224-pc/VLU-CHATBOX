@@ -1027,27 +1027,24 @@ body.dark-mode .mode-toggle-top {
 .has-submenu:hover .submenu { display: block; }
 /* Container của Menu đính kèm */
 .attach-menu {
-    display: none; /* Ẩn mặc định */
+    display: none; 
     position: absolute;
-    bottom: 60px; /* Hiển thị phía trên input */
+    bottom: 60px; 
     left: 10px;
-    background: #2f2f2f; /* Màu tối giống ảnh mẫu */
+    background: var(--attach-bg); /* Sử dụng biến màu nền */
+    color: var(--attach-text);    /* Sử dụng biến màu chữ */
     border-radius: 12px;
     padding: 8px;
     min-width: 220px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 20px var(--attach-shadow); /* Đổ bóng theo chế độ */
     z-index: 1000;
+    border: 1px solid rgba(128, 128, 128, 0.2); /* Viền mảnh để tách biệt nền */
+    transition: background 0.3s, color 0.3s;    /* Hiệu ứng chuyển màu mượt */
 }
 
-/* Class active: Khi có class này thì menu mới hiện */
 .attach-menu.active {
     display: block;
-    animation: fadeInUp 0.2s ease-out; /* Thêm hiệu ứng nhún nhảy nhẹ */
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    animation: fadeInUp 0.2s ease-out;
 }
 
 /* Style cho các mục trong menu */
@@ -1056,18 +1053,46 @@ body.dark-mode .mode-toggle-top {
     align-items: center;
     padding: 10px 12px;
     cursor: pointer;
-    color: white;
+    color: inherit; /* Tự động lấy màu từ thẻ cha .attach-menu */
     border-radius: 8px;
     font-size: 14px;
     transition: background 0.2s;
+}
+
+.menu-item:hover {
+    background: var(--attach-hover); /* Sử dụng biến màu hover */
 }
 
 .menu-item i {
     width: 20px;
     margin-right: 12px;
     text-align: center;
+    opacity: 0.9;
+}
+/* Sidebar mặc định */
+aside {
+    transition: all 0.3s ease;
+    width: 260px; /* Độ rộng cũ của bạn */
+    overflow: hidden;
 }
 
-.menu-item:hover {
-    background: #404040;
+/* Khi Sidebar bị đóng */
+aside.closed {
+    width: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+}
+
+/* Nút bấm đóng mở */
+.toggle-btn {
+    
+    left: 10px;
+    top: 10px;
+    z-index: 1000;
+    background: transparent;
+    border: none;
+    color: var(--text-color); /* Hoặc màu bạn thích */
+    cursor: pointer;
+    font-size: 20px;
 }
