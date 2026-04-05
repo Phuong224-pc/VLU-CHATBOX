@@ -1,5 +1,12 @@
 // --- 1. CẤU HÌNH GROQ API ---
-const GROQ_API_KEY = CONFIG.GROQ_API_KEY;
+// Kiểm tra xem CONFIG có tồn tại không trước khi lấy Key (Giúp demo trên GitHub không bị sập)
+let API_KEY = "";
+if (typeof CONFIG !== "undefined") {
+    API_KEY = CONFIG.GROQ_API_KEY;
+} else {
+    console.warn("Đang chạy chế độ Demo (không có API Key). Giao diện vẫn hoạt động bình thường.");
+}
+
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // Biến toàn cục để quản lý phiên chat hiện tại
@@ -17,26 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
     const chatbox = document.getElementById('chatbox');
     const welcomeScreen = document.getElementById('welcomeScreen');
-    const plusBtn = document.getElementById('plusBtn'); // Nút +
-    const attachMenu = document.getElementById('attachMenu'); // Cái Menu cần hiện
+    const plusBtn = document.getElementById('plusBtn'); 
+    const attachMenu = document.getElementById('attachMenu'); 
     const sendBtn = document.getElementById('sendBtn');
     const clearChatBtn = document.getElementById('clearChatBtn');
     const chatHistoryList = document.getElementById('chatHistoryList');
     const newChatBtn = document.getElementById('newChatBtn');
     const darkModeBtn = document.getElementById('darkModeBtn');
     const modeText = document.getElementById('modeText');
-    // --- [MỚI THÊM] LOGIC ĐÓNG/MỞ SIDEBAR GIỐNG CHATGPT ---
     const toggleSidebar = document.getElementById('toggleSidebar');
-    const sidebar = document.querySelector('aside'); // Hoặc ID/Class sidebar của Phương
-    const mainContent = document.querySelector('main'); // Phần khung chat chính
+    const sidebar = document.querySelector('aside'); 
 
+    // --- LOGIC ĐÓNG/MỞ SIDEBAR ---
     if (toggleSidebar && sidebar) {
         toggleSidebar.onclick = () => {
             sidebar.classList.toggle('closed');
-            
-            
-            
-            // Đổi icon bars thành icon khác khi đóng/mở cho đẹp
             const icon = toggleSidebar.querySelector('i');
             if (sidebar.classList.contains('closed')) {
                 icon.classList.replace('fa-bars', 'fa-chevron-right');
@@ -45,37 +47,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
-    
-    
-    // --- [MỚI THÊM] 2.1 LOGIC ĐIỀU KHIỂN MENU ĐÍNH KÈM (ATTACH MENU) ---
+
+    // --- 2.1 LOGIC ĐIỀU KHIỂN MENU ĐÍNH KÈM (ATTACH MENU) ---
     if (plusBtn && attachMenu) {
-        // Mở/tắt menu khi bấm nút +
         plusBtn.onclick = (e) => {
-            e.stopPropagation(); // Ngăn sự kiện 'click' lan ra ngoài làm đóng menu ngay lập tức
-            console.log("Phương đã bấm nút +");
-            attachMenu.classList.toggle('active'); // Thêm/Xóa class 'active'
+            e.stopPropagation(); 
+            attachMenu.classList.toggle('active'); 
         };
 
-        // Đóng menu khi bấm ra bất kỳ đâu ngoài vùng menu
         document.addEventListener('click', (e) => {
-            // Nếu menu đang mở VÀ cái click KHÔNG nằm trong menu VÀ KHÔNG phải là nút +
             if (attachMenu.classList.contains('active') && !attachMenu.contains(e.target) && e.target !== plusBtn) {
-                console.log("Đã đóng menu do bấm ra ngoài");
                 attachMenu.classList.remove('active');
             }
         });
 
-        // Xử lý khi bấm vào các item bên trong menu (Ví dụ)
+        // Xử lý click item trong menu (Dùng switch case bên dưới)
         const menuItems = attachMenu.querySelectorAll('.menu-item');
         menuItems.forEach(item => {
-            item.onclick = function() {
-                // Lấy tên chức năng để test
-                const actionName = this.innerText.trim();
-                console.log("Phương đã chọn chức năng:", actionName);
-                
-                // Bạn có thể thêm code xử lý cho từng nút ở đây
-                
-                // Bấm xong thì đóng menu
+            item.onclick = function(e) {
+                e.stopPropagation();
+                const action = this.innerText.trim();
+                console.log("Phương đã chọn chức năng:", action);
+
+                switch(action) {
+                    case "Thêm ảnh và tệp":
+                        alert("Mở trình chọn tệp...");
+                        break;
+                    case "Tạo hình ảnh":
+                        userInput.value = "/imagine "; 
+                        userInput.focus();
+                        break;
+                    case "Tìm kiếm trên mạng":
+                        alert("Đang kích hoạt tìm kiếm trực tuyến!");
+                        break;
+                    default:
+                        console.log("Chức năng đang phát triển");
+                }
                 attachMenu.classList.remove('active');
             };
         });
@@ -129,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
             userInput.style.height = 'auto';
             userInput.focus();
             updateHistorySidebar();
-            console.log("Đã bắt đầu phiên chat mới!");
         };
     }
 
@@ -219,38 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNew) contentDiv.classList.add('fade-in');
         chatbox.scrollTop = chatbox.scrollHeight;
     }
-    // Tìm tất cả các item trong menu
-const menuItems = attachMenu.querySelectorAll('.menu-item');
-
-menuItems.forEach(item => {
-    item.onclick = function(e) {
-        e.stopPropagation(); // Tránh bị đóng menu sai cách
-        
-        const action = this.innerText.trim();
-        console.log("Phương vừa click vào:", action);
-
-        // Xử lý logic cho từng nút
-        switch(action) {
-            case "Thêm ảnh và tệp":
-                alert("Mở trình chọn tệp...");
-                // code mở input file ở đây
-                break;
-            case "Tạo hình ảnh":
-                userInput.value = "/imagine "; // Gợi ý lệnh tạo ảnh
-                userInput.focus();
-                break;
-            case "Tìm kiếm trên mạng":
-                alert("Đang kích hoạt tìm kiếm trực tuyến!");
-                break;
-            // Thêm các chức năng khác tùy ý Phương nhé
-            default:
-                console.log("Chức năng đang phát triển");
-        }
-
-        // Sau khi click xong thì đóng menu lại cho gọn
-        attachMenu.classList.remove('active');
-    };
-});
 
     // --- 7. XỬ LÝ GỬI TIN NHẮN QUA GROQ API ---
     async function sendMessage() {
@@ -275,12 +249,20 @@ menuItems.forEach(item => {
         chatbox.appendChild(typingMsg);
         chatbox.scrollTop = chatbox.scrollHeight;
 
+        // KIỂM TRA KEY CHO BẢN DEMO
+        if (!API_KEY) {
+            setTimeout(() => {
+                if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
+                renderBotMessage("⚠️ Hiện tại đang ở chế độ Demo (không có API Key). Bạn vẫn có thể trải nghiệm các tính năng giao diện nhé Phương!", true);
+            }, 1000);
+            return;
+        }
+
         try {
-            // GỌI API GROQ THAY CHO GEMINI
             const response = await fetch(GROQ_URL, {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${GROQ_API_KEY}`,
+                    "Authorization": `Bearer ${API_KEY}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
@@ -293,11 +275,9 @@ menuItems.forEach(item => {
             });
 
             const data = await response.json();
-            
             if (data.error) throw new Error(data.error.message);
 
             const botResponse = data.choices[0].message.content;
-
             if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
 
             renderBotMessage(botResponse, true);
@@ -306,7 +286,7 @@ menuItems.forEach(item => {
         } catch (error) {
             console.error("Lỗi API Groq:", error);
             if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
-            renderBotMessage("Ối! Có lỗi kết nối với Groq rồi Phương ơi. Kiểm tra lại API Key nhé!", true);
+            renderBotMessage("Ối! Có lỗi kết nối rồi Phương ơi. Kiểm tra lại API Key nhé!", true);
         }
     }
 
@@ -319,7 +299,7 @@ menuItems.forEach(item => {
     };
     sendBtn.onclick = sendMessage;
 
-    // --- CÁC TIỆN ÍCH DARK MODE, COPY, SPEAK ---
+    // --- TIỆN ÍCH DARK MODE ---
     if (darkModeBtn) {
         darkModeBtn.onclick = () => {
             const isDark = document.body.classList.toggle('dark-mode');
@@ -335,6 +315,7 @@ menuItems.forEach(item => {
         };
     }
 
+    // --- AUTH MODAL ---
     if (guestBtn) guestBtn.onclick = () => modal.style.display = "block";
     if (closeBtn) closeBtn.onclick = () => modal.style.display = "none";
     window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
@@ -352,6 +333,7 @@ menuItems.forEach(item => {
         loginTabBtn.classList.remove('active');
     }
 
+    // --- COPY & SPEAK ---
     window.copyText = (el) => {
         const text = el.closest('.message-wrapper').querySelector('.content').innerText;
         navigator.clipboard.writeText(text);
