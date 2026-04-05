@@ -206,25 +206,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderBotMessage(text, isNew = true) {
-        const bMsg = document.createElement('div');
-        bMsg.className = "message bot-message";
-        bMsg.innerHTML = `
-            <div class="bot-icon"><i class="fas fa-robot"></i></div>
-            <div class="message-wrapper" style="max-width: 85%;">
-                <div class="content"></div>
-                <div class="bot-actions">
-                    <i class="far fa-copy" title="Sao chép" onclick="copyText(this)"></i>
-                    <i class="fas fa-volume-up" title="Phát âm thanh" onclick="speakText(this)"></i>
-                </div>
+    const bMsg = document.createElement('div');
+    bMsg.className = "message bot-message";
+    bMsg.innerHTML = `
+        <div class="bot-icon"><i class="fas fa-robot"></i></div>
+        <div class="message-wrapper" style="max-width: 85%;">
+            <div class="content"></div>
+            <div class="bot-actions">
+                <i class="far fa-copy" title="Sao chép" onclick="copyText(this)"></i>
+                <i class="fas fa-volume-up" title="Phát âm thanh" onclick="speakText(this)"></i>
             </div>
-        `;
-        chatbox.appendChild(bMsg);
-        const contentDiv = bMsg.querySelector('.content');
+        </div>
+    `;
+    chatbox.appendChild(bMsg);
+    const contentDiv = bMsg.querySelector('.content');
+
+    // SỬA TẠI ĐÂY: Nếu chuỗi bắt đầu bằng <div, ta hiểu đó là HTML và render thẳng
+    if (text.trim().startsWith('<div')) {
+        contentDiv.innerHTML = text;
+    } else {
         const htmlContent = typeof marked !== 'undefined' ? marked.parse(text) : text;
         contentDiv.innerHTML = htmlContent;
-        if (isNew) contentDiv.classList.add('fade-in');
-        chatbox.scrollTop = chatbox.scrollHeight;
     }
+
+    if (isNew) contentDiv.classList.add('fade-in');
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
 
     // --- 7. XỬ LÝ GỬI TIN NHẮN QUA GROQ API ---
     async function sendMessage() {
