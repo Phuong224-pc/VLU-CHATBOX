@@ -253,8 +253,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!API_KEY) {
             setTimeout(() => {
                 if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
-                renderBotMessage("⚠️ Hiện tại đang ở chế độ Demo (không có API Key). Bạn vẫn có thể trải nghiệm các tính năng giao diện nhé Phương!", true);
-            }, 1000);
+                renderBotMessage(`
+                    <div style="line-height: 1.6;">
+                        <strong style="color: #d9534f; font-size: 1.1em;">⚠️ YÊU CẦU CẤU HÌNH HỆ THỐNG</strong><br>
+                        Chào Phương! Để kích hoạt trí tuệ nhân tạo, bạn vui lòng thực hiện các bước sau:
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><b>Bước 1:</b> Tạo file <code>config.js</code> trong thư mục gốc dự án.</li>
+                            <li><b>Bước 2:</b> Sao chép nội dung từ file <code>config.example.js</code> sang.</li>
+                            <li><b>Bước 3:</b> Dán mã <b>API Key</b> lấy từ <a href="https://console.groq.com/" target="_blank" style="color: #007bff; text-decoration: underline;">GROQ Cloud</a> vào biến <code>GROQ_API_KEY</code>.</li>
+                            <li><b>Bước 4:</b> Lưu file và nhấn <b>F5</b> để bắt đầu trò chuyện.</li>
+                        </ul>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #666;"><i>* Ghi chú: Giao diện vẫn hoạt động bình thường ở chế độ xem trước (Preview).</i></p>
+                    </div>
+                `, true);
+            }, 800);
             return;
         }
 
