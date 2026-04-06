@@ -1,5 +1,4 @@
 // --- 1. CẤU HÌNH GROQ API ---
-// Kiểm tra xem CONFIG có tồn tại không trước khi lấy Key (Giúp demo trên GitHub không bị sập)
 let API_KEY = "";
 if (typeof CONFIG !== "undefined") {
     API_KEY = CONFIG.GROQ_API_KEY;
@@ -9,8 +8,18 @@ if (typeof CONFIG !== "undefined") {
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Biến toàn cục để quản lý phiên chat hiện tại
+// Biến toàn cục để quản lý phiên chat và ngữ cảnh
 let currentChatId = null;
+let currentSystemPrompt = "Bạn là trợ lý ảo của Đại học Văn Lang (VLU). Hãy trả lời thân thiện bằng tiếng Việt.";
+
+// Định nghĩa các ngữ cảnh chuyên biệt cho từng mục sidebar
+const featurePrompts = {
+    'roadmap': "Bạn là chuyên gia tư vấn lộ trình học tập tại VLU. Hãy dựa vào chương trình đào tạo của trường để tư vấn các môn học, chứng chỉ (như IELTS 7.5) và lộ trình ra trường đúng hạn cho sinh viên.",
+    'results': "Bạn là chuyên gia phân tích kết quả học tập. Hãy giúp sinh viên hiểu về GPA, cách cải thiện điểm số và các quy định về học vụ tại VLU.",
+    'graduation': "Bạn là cố vấn tốt nghiệp. Hãy tư vấn về điều kiện xét tốt nghiệp, các chứng chỉ đầu ra và thủ tục nhận bằng tại VLU.",
+    'future': "Bạn là chuyên gia định hướng nghề nghiệp. Hãy giúp sinh viên VLU kết nối ngành học với thị trường lao động và phát triển kỹ năng mềm.",
+    'default': "Bạn là trợ lý ảo của Đại học Văn Lang (VLU). Hãy trả lời thân thiện bằng tiếng Việt."
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- 2. KHAI BÁO CÁC PHẦN TỬ ---
@@ -33,8 +42,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeBtn = document.getElementById('darkModeBtn');
     const modeText = document.getElementById('modeText');
     const toggleSidebar = document.getElementById('toggleSidebar');
-    const sidebar = document.querySelector('aside'); 
+    const sidebar = document.querySelector('aside');
+    document.getElementById('goHomeBtn').addEventListener('click', () => {
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const chatbox = document.getElementById('chatbox');
+    
+    // 1. Xóa tất cả các tin nhắn cũ trong chatbox (trừ cái welcomeScreen)
+    // Cách an toàn nhất là xóa hết các thẻ .message
+    const messages = chatbox.querySelectorAll('.message');
+    messages.forEach(msg => msg.remove());
 
+    // 2. Hiện lại Welcome Screen
+    if (welcomeScreen) {
+        welcomeScreen.style.display = 'flex';
+        // Gọi lại hàm cập nhật lời chào theo thời gian (nếu bạn có)
+        updateDynamicGreeting(); 
+    }
+
+    // 3. Cuộn lên trên cùng
+    chatbox.scrollTop = 0;
+});
+
+// Hàm cập nhật lời chào động (nên thêm vào để giống hình bạn gửi)
+function updateDynamicGreeting() {
+    const greetingText = document.getElementById('dynamicGreeting');
+    const hour = new Date().getHours();
+    
+    if (hour < 12) {
+        greetingText.innerText = "Chào buổi sáng! Chúc bạn ngày mới năng suất tại VLU! ☀️";
+    } else if (hour < 18) {
+        greetingText.innerText = "Chào buổi chiều! Bạn cần hỗ trợ gì về lịch học không? ✨";
+    } else {
+        greetingText.innerText = "Tối muộn rồi, đừng thức khuya quá nhé sinh viên VLU ơi! 🌙";
+    }
+}
+    
     // --- LOGIC ĐÓNG/MỞ SIDEBAR ---
     if (toggleSidebar && sidebar) {
         toggleSidebar.onclick = () => {
@@ -48,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- 2.1 LOGIC ĐIỀU KHIỂN MENU ĐÍNH KÈM (ATTACH MENU) ---
+    // --- 2.1 LOGIC ĐIỀU KHIỂN MENU ĐÍNH KÈM ---
     if (plusBtn && attachMenu) {
         plusBtn.onclick = (e) => {
             e.stopPropagation(); 
@@ -61,14 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Xử lý click item trong menu (Dùng switch case bên dưới)
         const menuItems = attachMenu.querySelectorAll('.menu-item');
         menuItems.forEach(item => {
             item.onclick = function(e) {
                 e.stopPropagation();
                 const action = this.innerText.trim();
-                console.log("Phương đã chọn chức năng:", action);
-
                 switch(action) {
                     case "Thêm ảnh và tệp":
                         alert("Mở trình chọn tệp...");
@@ -80,13 +119,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     case "Tìm kiếm trên mạng":
                         alert("Đang kích hoạt tìm kiếm trực tuyến!");
                         break;
-                    default:
-                        console.log("Chức năng đang phát triển");
                 }
                 attachMenu.classList.remove('active');
             };
         });
     }
+
+    // --- 2.2 LOGIC CHUYỂN ĐỔI PHIÊN CHAT THEO TÍNH NĂNG ---
+    function switchToFeatureChat(featureKey) {
+        currentChatId = null; 
+        chatbox.innerHTML = '';
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+        currentSystemPrompt = featurePrompts[featureKey] || featurePrompts['default'];
+
+        let introText = "Chào Phương! Mình có thể giúp gì cho bạn?";
+        if(featureKey === 'roadmap') introText = "Chào Phương! Mình sẽ giúp bạn xây dựng **lộ trình học tập** hiệu quả tại VLU. Bạn cần tư vấn về mục tiêu IELTS hay kế hoạch môn học?";
+        else if(featureKey === 'results') introText = "Chào Phương! Hãy gửi cho mình bảng điểm hoặc môn học bạn thắc mắc, mình sẽ **phân tích kết quả** giúp bạn.";
+        else if(featureKey === 'graduation') introText = "Chào Phương! Mình sẽ hỗ trợ bạn kiểm tra các điều kiện để **tốt nghiệp** đúng hạn.";
+        else if(featureKey === 'future') introText = "Chào Phương! Chúng ta hãy cùng thảo luận về **định hướng sự nghiệp** sau khi tốt nghiệp VLU nhé.";
+
+        renderBotMessage(introText, true);
+        userInput.focus();
+        updateHistorySidebar();
+    }
+
+    // SỬA LỖI ĐẢO CÂU: Chọn trực tiếp bằng ID thay vì nth-child
+    const roadmapBtn = document.getElementById('btn-roadmap');
+    const resultsBtn = document.getElementById('btn-results');
+    const graduationBtn = document.getElementById('btn-graduation');
+    const futureBtn = document.getElementById('btn-future');
+
+    if(roadmapBtn) roadmapBtn.onclick = (e) => { e.preventDefault(); switchToFeatureChat('roadmap'); };
+    if(resultsBtn) resultsBtn.onclick = (e) => { e.preventDefault(); switchToFeatureChat('results'); };
+    if(graduationBtn) graduationBtn.onclick = (e) => { e.preventDefault(); switchToFeatureChat('graduation'); };
+    if(futureBtn) futureBtn.onclick = (e) => { e.preventDefault(); switchToFeatureChat('future'); };
 
     // --- 3. TỰ ĐỘNG LOAD DANH SÁCH SIDEBAR ---
     updateHistorySidebar();
@@ -100,36 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         else dynamicGreeting.innerText = "Tối muộn rồi, đừng thức khuya quá nhé sinh viên VLU ơi! 🌙";
     }
 
-    // --- KIỂM TRA TRẠNG THÁI DARK MODE ---
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        if (modeText) modeText.innerText = "Chế độ sáng";
-        const icon = darkModeBtn.querySelector('i');
-        if (icon) icon.classList.replace('fa-moon', 'fa-sun');
-    }
-
-    // --- HÀM MƯA LOGO VLU ---
-    function rainLogo() {
-        for (let i = 0; i < 15; i++) {
-            const logo = document.createElement('img');
-            logo.src = 'img/logovanlang.png'; 
-            logo.className = 'rain-logo';
-            logo.style.left = Math.random() * 100 + 'vw';
-            logo.style.position = 'fixed';
-            logo.style.top = '-50px';
-            logo.style.width = '40px';
-            logo.style.zIndex = '9999';
-            logo.style.pointerEvents = 'none';
-            logo.style.animation = `rainFall ${Math.random() * 2 + 1}s linear forwards`;
-            document.body.appendChild(logo);
-            setTimeout(() => logo.remove(), 2000);
-        }
-    }
-
     // --- 4. XỬ LÝ ĐOẠN CHAT MỚI ---
     if (newChatBtn) {
         newChatBtn.onclick = () => {
             currentChatId = null; 
+            currentSystemPrompt = featurePrompts['default'];
             chatbox.innerHTML = '';
             if (welcomeScreen) welcomeScreen.style.display = 'flex';
             userInput.value = '';
@@ -138,6 +180,27 @@ document.addEventListener('DOMContentLoaded', () => {
             updateHistorySidebar();
         };
     }
+    // --- SỬA LỖI: LOGIC XÓA TOÀN BỘ LỊCH SỬ ---
+if (clearChatBtn) {
+    clearChatBtn.onclick = () => {
+        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử chat không?')) {
+            // 1. Xóa dữ liệu trong LocalStorage
+            localStorage.removeItem('vlu_chat_sessions');
+            
+            // 2. Reset các biến trạng thái
+            currentChatId = null;
+            
+            // 3. Làm sạch giao diện
+            chatbox.innerHTML = '';
+            if (welcomeScreen) welcomeScreen.style.display = 'flex';
+            
+            // 4. Cập nhật lại danh sách ở sidebar
+            updateHistorySidebar();
+            
+            alert('Đã xóa toàn bộ lịch sử chat!');
+        }
+    };
+}
 
     // --- 5. LOGIC LƯU VÀ TẢI LỊCH SỬ ---
     function saveChatToLocal(role, text) {
@@ -187,15 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (clearChatBtn) {
-        clearChatBtn.onclick = () => {
-            if (confirm("Xóa sạch toàn bộ lịch sử trò chuyện?")) {
-                localStorage.removeItem('vlu_chat_sessions');
-                location.reload();
-            }
-        };
-    }
-
     // --- 6. HÀM HIỂN THỊ TIN NHẮN ---
     function renderUserMessage(text) {
         const uMsg = document.createElement('div');
@@ -206,39 +260,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderBotMessage(text, isNew = true) {
-    const bMsg = document.createElement('div');
-    bMsg.className = "message bot-message";
-    bMsg.innerHTML = `
-        <div class="bot-icon"><i class="fas fa-robot"></i></div>
-        <div class="message-wrapper" style="max-width: 85%;">
-            <div class="content"></div>
-            <div class="bot-actions">
-                <i class="far fa-copy" title="Sao chép" onclick="copyText(this)"></i>
-                <i class="fas fa-volume-up" title="Phát âm thanh" onclick="speakText(this)"></i>
+        const bMsg = document.createElement('div');
+        bMsg.className = "message bot-message";
+        bMsg.innerHTML = `
+            <div class="bot-icon"><i class="fas fa-robot"></i></div>
+            <div class="message-wrapper" style="max-width: 85%;">
+                <div class="content"></div>
+                <div class="bot-actions">
+                    <i class="far fa-copy" title="Sao chép" onclick="copyText(this)"></i>
+                    <i class="fas fa-volume-up" title="Phát âm thanh" onclick="speakText(this)"></i>
+                </div>
             </div>
-        </div>
-    `;
-    chatbox.appendChild(bMsg);
-    const contentDiv = bMsg.querySelector('.content');
+        `;
+        chatbox.appendChild(bMsg);
+        const contentDiv = bMsg.querySelector('.content');
 
-    // SỬA TẠI ĐÂY: Nếu chuỗi bắt đầu bằng <div, ta hiểu đó là HTML và render thẳng
-    if (text.trim().startsWith('<div')) {
-        contentDiv.innerHTML = text;
-    } else {
-        const htmlContent = typeof marked !== 'undefined' ? marked.parse(text) : text;
-        contentDiv.innerHTML = htmlContent;
+        if (text.trim().startsWith('<div')) {
+            contentDiv.innerHTML = text;
+        } else {
+            const htmlContent = typeof marked !== 'undefined' ? marked.parse(text) : text;
+            contentDiv.innerHTML = htmlContent;
+        }
+
+        if (isNew) contentDiv.classList.add('fade-in');
+        chatbox.scrollTop = chatbox.scrollHeight;
     }
-
-    if (isNew) contentDiv.classList.add('fade-in');
-    chatbox.scrollTop = chatbox.scrollHeight;
-}
 
     // --- 7. XỬ LÝ GỬI TIN NHẮN QUA GROQ API ---
     async function sendMessage() {
         const text = userInput.value.trim();
         if (!text) return;
 
-        if (text.toUpperCase().includes("VLU")) rainLogo();
         if (welcomeScreen) welcomeScreen.style.display = 'none';
 
         renderUserMessage(text);
@@ -256,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbox.appendChild(typingMsg);
         chatbox.scrollTop = chatbox.scrollHeight;
 
-        // KIỂM TRA KEY CHO BẢN DEMO
         if (!API_KEY) {
             setTimeout(() => {
                 if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
@@ -287,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     model: "llama-3.3-70b-versatile",
                     messages: [
-                        { role: "system", content: "Bạn là trợ lý ảo của Đại học Văn Lang (VLU). Hãy trả lời thân thiện bằng tiếng Việt." },
+                        { role: "system", content: currentSystemPrompt },
                         { role: "user", content: text }
                     ]
                 })
@@ -305,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Lỗi API Groq:", error);
             if (chatbox.contains(typingMsg)) chatbox.removeChild(typingMsg);
-            renderBotMessage("Ối! Có lỗi kết nối rồi Phương ơi. Kiểm tra lại API Key nhé!", true);
+            renderBotMessage("Ối! Có lỗi kết nối rồi Phương ơi.", true);
         }
     }
 
@@ -318,7 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     sendBtn.onclick = sendMessage;
 
-    // --- TIỆN ÍCH DARK MODE ---
     if (darkModeBtn) {
         darkModeBtn.onclick = () => {
             const isDark = document.body.classList.toggle('dark-mode');
@@ -334,25 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- AUTH MODAL ---
-    if (guestBtn) guestBtn.onclick = () => modal.style.display = "block";
-    if (closeBtn) closeBtn.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
-
-    loginTabBtn.onclick = () => {
-        loginForm.style.display = "flex";
-        registerForm.style.display = "none";
-        loginTabBtn.classList.add('active');
-        registerTabBtn.classList.remove('active');
-    }
-    registerTabBtn.onclick = () => {
-        loginForm.style.display = "none";
-        registerForm.style.display = "flex";
-        registerTabBtn.classList.add('active');
-        loginTabBtn.classList.remove('active');
-    }
-
-    // --- COPY & SPEAK ---
     window.copyText = (el) => {
         const text = el.closest('.message-wrapper').querySelector('.content').innerText;
         navigator.clipboard.writeText(text);
