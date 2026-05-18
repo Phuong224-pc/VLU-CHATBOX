@@ -633,18 +633,6 @@ textarea {
 /* --- PHẦN BỔ SUNG: LỊCH SỬ CHAT BÊN SIDEBAR --- */
 
 
-/* Căn chỉnh lại sidebar-top để có thể chứa danh sách cuộn */
-
-.sidebar-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    overflow: hidden;
-    width: 100%;
-}
-
-
 /* Khối danh sách lịch sử chat */
 
 .chat-history-list {
